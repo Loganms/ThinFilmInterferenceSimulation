@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="keywords" content="thin-film interference, simulation, browser">
+	<meta name="description" content="Free browser simulation of light interacting with thin films of material">
+	<meta name="author" content="Logan Scheiner">
+	<meta charset="utf-8"/>
+	<title>Thin-Film Interference</title>
+	<link rel = "stylesheet" type = "text/css" href = "normalize.css" />
+	<link rel = "stylesheet" type = "text/css" href = "styles.css" />
+</head>
+<body onload="document.userOptionsForm.reset();">
+<div class="infoTitle"> 
+	<h1  style="text-align: center">Thin-Film Interference Simulation</h1>
+</div>
+<div class="backgroundGap"></div>
+<div id="simulationModule">
+<form name="userOptionsForm">
+<table id="simulationTable">
+	<tr>	
+		<td class="simulationHeight">
+			<div id="results" style="width: 175px; height: 539px; background-color: black">
+				<table style="margin-left: auto; margin-right: auto; height: 100%">
+					<tr>
+						<td>
+						<table class="resultBlock">
+							<thead>
+							<tr class="resultTitleText">
+								<th colspan="4">Incident</th>
+							</tr>
+							</thead>
+							<tr>
+								<td>
+									<div class="resultColorBlock" id="incidentR">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="incidentG">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="incidentB">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="incidentNet">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>R</th>
+								<th>G</th>							
+								<th>B</th>								
+								<th>net</th>
+								
+							</tr>
+						</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<table class="resultBlock">
+							<thead>
+							<tr class="resultTitleText">
+								<th colspan="4">Reflected</th>
+							</tr>
+							</thead>
+							<tr>
+								<td>
+									<div class="resultColorBlock" id="reflectedR">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="reflectedG">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="reflectedB">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="reflectedNet">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>R</th>
+								<th>G</th>							
+								<th>B</th>								
+								<th>net</th>
+								
+							</tr>
+						</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<table class="resultBlock">
+							<thead>
+							<tr class="resultTitleText">
+								<th colspan="4">Transmitted</th>
+							</tr>
+							</thead>
+							<tr>
+								<td>
+									<div class="resultColorBlock" id="transmittedR">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="transmittedG">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="transmittedB">
+									</div>
+								</td>
+								<td>
+									<div class="resultColorBlock" id="transmittedNet">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>R</th>
+								<th>G</th>							
+								<th>B</th>								
+								<th>net</th>
+								
+							</tr>
+						</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+		<td class="simulationHeight">
+			<canvas id="sineCanvas" style="display:block;width: 100%; height: 539px;"></canvas>
+		</td>
+		<td class="userOptionsWidth" style="height: 539px;">
+			<div id="userOptions">
+			<table id="userOptionsTable">
+				<tr>
+				<td class="userOptionsTableRow  userOptionsWidth">
+					<table id="lightSourceTable" class="userOptionsBlock">
+					<tr style="width: 100%">
+						<th>Light source</th>
+					</tr>
+					<tr>
+						<td>
+						<input type="checkbox" id="redSource" name="source" value="red" onclick="updateSources(this.value, this.checked)" checked/>
+						<label for="redSource">Red (660 nm)</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="greenSource" name="source" value="green" onclick="updateSources(this.value, this.checked)"/>
+						<label for="greenSource">Green (540 nm)</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="blueSource" name="source" value="blue" onclick="updateSources(this.value, this.checked)"/>
+						<label for="blueSource">Blue (440 nm)</label>
+						</td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+				<tr>
+				<td class="userOptionsTableRow userOptionsWidth">
+					<table id="interferenceTable" class="userOptionsBlock">
+					<tr>
+						<th>Show interference for:</th>
+					</tr>
+					<tr>
+						<td><input type="radio" id="redInt" name="interference" value="Red" onclick="changeInterference(this.value)" checked/>
+						<label for="redInt">Red</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="radio" id="greenInt" name="interference" value="Lime" onclick="changeInterference(this.value)"/>
+						<label for="greenInt">Green</label>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="radio" id="blueInt" name="interference" value="Blue" onclick="changeInterference(this.value)"/>
+						<label for="blueInt">Blue</label>
+						</td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+				<tr>
+				<td class="userOptionsTableRow userOptionsWidth">
+				
+					<table id="thicknessTable"  class="userOptionsBlock">
+					<tr>
+						<th>Film thickness (nm) = <span id="thicknessValue">400</span></th>
+					</tr>
+					<tr>
+						<td class="sliderContainer">		
+						<input type="range" id="thicknessSlider" class="sliders" name="thickness" min="0" max="700" step="4" value="400" oninput="changeSlider(this.id, this.value)" onchange="changeSlider(this.id, this.value)"/>
+						</td>
+					</tr>
+					<tr>
+						<th>n1 = <span id="n1Value">1</span></th>
+					</tr>
+					<tr>
+						<td class="sliderContainer">		
+						<input type="range" id="n1ValueSlider" class="sliders" name="n1" min="1" max="2" step="0.01" value="1" oninput="changeSlider(this.id, this.value)" onchange="changeSlider(this.id, this.value)"/>
+						</td>
+					</tr>
+					<tr>
+						<th>n2 = <span id="n2Value">1.6</span></th>
+					</tr>
+					<tr>
+						<td class="sliderContainer">		
+						<input type="range" id="n2ValueSlider" class="sliders" name="n2" min="1" max="2" step="0.01" value="1.6" oninput="changeSlider(this.id, this.value)" onchange="changeSlider(this.id, this.value)"/>
+						</td>
+					</tr>
+					<tr>
+						<th>n3 = <span id="n3Value">1.33</span></th>
+					</tr>
+					<tr>
+						<td class="sliderContainer">		
+						<input type="range" id="n3ValueSlider" class="sliders" name="n3" min="1" max="2" step="0.01" value="1.33" oninput="changeSlider(this.id, this.value)" onchange="changeSlider(this.id, this.value)"/>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: center;background-color: #00394d">		
+						<input type="button" id="playButton" name="play" value="Play" onclick="toggle(this, 'Play', 'Pause')"/>
+						</td>
+					</table>
+				</td>
+				</tr>
+				<tr>
+				<td class="userOptionsTableRow userOptionsWidth">
+					<table id="speedOptionsBlock" class="userOptionsBlock">
+					<tr>
+						<th colspan = "3">Simulation Speed:</th>
+					</tr>
+					<tr>
+						<td><input type="radio" id="speedLo" name="speed" value="0.5" onclick="changeSpeed(this.value)"/>
+						<label for="speedLo">Lo</label>
+						</td>
+					
+						<td><input type="radio" id="speedMed" name="speed" value="1.0" onclick="changeSpeed(this.value)" checked/>
+						<label for="speedMed">Med</label>
+						</td>
+					
+						<td><input type="radio" id="speedHi" name="speed" value="2.0" onclick="changeSpeed(this.value)"/>
+						<label for="speedHi">Hi</label>
+						</td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+				<tr>
+				<td class="userOptionsTableRow userOptionsWidth">
+					<table id="qualitysOptionsBlock" class="userOptionsBlock">
+					<tr>
+						<th colspan = "3">Simulation Quality:</th>
+					</tr>
+					<tr>
+						<td><input type="radio" id="qualityLo" name="quality" value="0.5" onclick="changeQuality(this.value)"/>
+						<label for="qualityLo">Lo</label>
+						</td>
+					
+						<td><input type="radio" id="qualityMed" name="quality" value="1.0" onclick="changeQuality(this.value)" checked/>
+						<label for="qualityMed">Med</label>
+						</td>
+					
+						<td><input type="radio" id="qualityHi" name="quality" value="5.0" onclick="changeQuality(this.value)"/>
+						<label for="qualityHi">Hi</label>
+						</td>
+					</tr>
+					</table>
+				</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+</div>
+<script src= "script.js"></script>
+<div class="backgroundGap"></div>
+<div class="infoTitle" style="cursor: pointer" onclick="hideShow('textInformation')" title="hide/show"><h3 >Thin-Film Interference</h3></div>
+<div id="textInformation" style="display:block">
+<p>With this simulation, you can explore thin-film interference. When light traveling in one medium is incident on a thin film of material that is in contact with another medium, some light reflects off the front surface of the film, and some light goes through the film, reflects off the back surface of the film, and emerges back into the original medium. These two reflected waves then interfere with one another. The interference can be constructive, destructive, or something in between, depending on the thickness of the film.</p>
+<p>Note that, in the simulation, the incident wave is shown on top. The wave that reflects off the front surface of the film is moved below it, so we can see it easily without it being on top of the incident wave. The wave that reflects off the back surface of the film is moved even farther below. Look at the interference that occurs between the two reflected waves traveling towards the left in the first medium.</p>
+<p>We can start our analysis by thinking about the path-length difference that occurs for the two waves. One wave just bounces off the film, while the other wave goes through the film, reflects, and travels through the film again before emerging back into the first medium. If the film thickness is t, then the second wave travels an extra distance of 2t compared to the first wave. The path-length difference, in other words, is 2t.</p>
+<p>Based on our previous understanding of interference, we might expect that if this path-length difference was equal to an integer number of wavelengths, we would see constructive interference, and if the path-length difference was an integer number of wavelengths, we would see destructive interference. It is just a little more complicated than this, however - there are two more ideas that we need to consider.</p>
+<p>First, we have up to three media in this situation, and the wavelength of the light is different in the different media - which wavelength is it that really matters? To satisfy the interference conditions, we need to align the wave that goes down and back in the film with the wave that bounces off the top of the film. Thus, it is the wavelength in the film that really matters.</p>
+<p>Note that the wavelength in any medium is related to the wavelength in vacuum by the equation: λ<sub>medium</sub> = λ<sub>vacuum</sub> / n<sub>medium</sub> </p>
+<p>Second, we have to account for the fact that when light reflects from a higher-n medium, it gets inverted (there is no inversion when light refllects from a lower-n medium). Inverting a sine wave is equivalent to simply moving the wave half a wavelength. Thus, in our thin-film situation, if both reflections result in an inversion, or neither one does, the 2t path-length difference we derived above is all we need to consider. If only one of the reflections results in an inversion, however, the effective path-length difference is 2t plus or minus (it doesn't really matter which) half a wavelength.</p>
+<p>Once we've determined the effective path-length difference between the two waves, we can set that equal to the appropriate interference condition. This gives us an equation that relates the thickness of the thin film to the wavelength of light in the film.</p>
+</div>
+<div class="backgroundGap"></div>
+<div class="infoTitle" style="cursor: pointer" onclick="hideShow('activities')" title="hide/show"><h3 >Activities</h3></div>
+<div id="activities" style="display:block">
+<ol>
+	<li>Start with only the red light source on, and showing the interference for red light. With the initial settings for the indices of refraction of the various layers, vary the film thickness to determine which film thicknesses result in constructive interference for the reflected light, and which result in destructive interference for the reflected light. Express these thicknesses in terms of the wavelength of the red light in the film. Do you see a pattern in these two sets of thicknesses?</li>
+	<li>In the limit that the film thickness goes to zero, what kind of interference occurs for the reflected light? How can you explain this?</li>
+	<li>Now, adjust the index of refraction of medium 1 so that it is larger than that of medium 2. Repeat the observations you made in steps 1 and 2 above. What similarities and differences do you observe for your two sets of observations?</li>
+	<li>Find the smallest non-zero film thickness that gives constructive interference for the reflected light when the light is red. Now, make a prediction - when you switch to green light, will the smallest non-zero film thickness that gives constructive interference for green light be larger than, smaller than, or equal to the thickness you found for the red light. Justify your prediction, and then try it to see if you were correct. Repeat the process for blue light.</li>
+	<li>At the left of the simulation, you can see some colored boxes representing the color of the incident light, the reflected light, and the transmitted light. For instance, if you have both red and blue incident light, the incident light would look purple to you, because it is actually red and blue mixed together. With this purple (red and blue, that is) incident light, can you find a film thickness that produces blue reflected light and red transmitted light? If so, how can you explain this?</li>
+</ol>
+</div>
+<div class="backgroundGap"></div>
+<div class="infoTitle" style="cursor: pointer" onclick="hideShow('acknowledgments')" title="hide/show"><h3 >Acknowledgments</h3></div>
+<div id="acknowledgments" style="display:block">
+<table style="margin: 0 auto;padding-left: 40px;padding-right: 40px;text-align: center">
+	<tr>
+		<td><h4>Thin-Film Interference Simulation by:</h4>
+			<br>
+			<h5>Logan Scheiner</h5>
+		</td>
+		<td><h4>Original Simulation by:</h4>
+			<br>
+			<h5>Andrew Duffy, Boston University</h5>
+		</td>
+	</tr>
+	<tr>
+		<td colspan = "2"><br></td>
+	</tr>
+	<tr>
+		<td colspan="2"><h4>Summary and Activities written by:</h4>
+			<br>
+			<h5>Andrew Duffy, Boston University</h5>
+		</td>
+	</tr>
+</table>
+</div>
+<div class="backgroundGap"></div>
+<div style="width:100%; height:100%; background-color: #00394d">
+	<br>
+	<p class="signature" style="text-align: center">Logan Scheiner</p>
+	<p class="signature">2015</p>
+	<p class="signature">
+		<a href="http://jigsaw.w3.org/css-validator/check/referer">
+		<img style="border:0;width:88px;height:31px"
+        src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+        alt="Valid CSS!" />
+		</a>
+	</p>
+</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-72408458-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
